@@ -1,4 +1,11 @@
+/**
+ * 2つの数値を加算するユーティリティ
+ * @param {number} a
+ * @param {number} b
+ * @returns {number}
+ */
 function sum(a, b) {
-    return a + b;
-  }
-  module.exports = sum;
+  return a + b;
+}
+
+module.exports = sum;
