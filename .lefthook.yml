@@ -1,14 +1,32 @@
+name: 🔍 PR Check
+
+# Lefthook configuration
+# https://lefthook.dev/configuration/
+# Git hooks を自動化して「コミット時」「プッシュ時」にチェックを強制する設定。
+
+# pre-commit フックは `git commit` の直前に走る。軽量な静的チェック中心。
 pre-commit:
-  parallel: true
+  parallel: true # 各コマンドを並列実行しコミット前の待ち時間を短縮。
   commands:
     lint:
       run: npm run lint
     format:
-      run: npm run format
-    typecheck:
-      run: npm run typecheck
+      # oxfmt で自動整形。stage_fixed により整形後のファイルを再度ステージングする。
+      name: Format with oxfmt
+      glob: "*.{ts,tsx,js,jsx}"
+      run: npx oxfmt {staged_files}
+      stage_fixed: true
 
+# pre-push フックは `git push` の直前に走る。重めのチェックをここで実施。
 pre-push:
+  parallel: true # push も並列化して時間を節約。
   commands:
     typecheck:
+      # TypeScript の型検証を実行し、CI まで到達する前に型崩れを検出。
+      name: Type Check
       run: npm run typecheck
+      
+    lint-all:
+      # リポジトリ全体に lint を走らせ、コミット対象外の崩れも push 前に察知。
+      name: Lint All Files
+      run: npm run lint
